@@ -1,0 +1,49 @@
+import numpy as np
+import pandas as pd
+import os
+import missingno
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder
+from pandas.plotting import scatter_matrix
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LinearRegression
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+from google.colab import drive
+
+# have to connect to my data files that stored in my google drive
+drive.mount('/content/drive')
+# Reading data stored in csv formats
+yield_data = pd.read_csv('/content/drive/My Drive/DsProject/yield.csv')
+temp_data = pd.read_csv('/content/drive/My Drive/DsProject/temp.csv')
+rainfall_data = pd.read_csv('/content/drive/My Drive/DsProject/rainfall.csv')
+pesticides_data = pd.read_csv('/content/drive/My Drive/DsProject/pesticides.csv')
+yield_df = pd.read_csv('/content/drive/My Drive/DsProject/yield_df.csv')
+yield_data.head(5)
+needed = ['Area','Item','Year','Value']
+yield_data = yield_data[needed]
+temp_data.rename(columns = {'year':'Year','country':'Area'}, inplace = True)
+temp_data.head(5)
+rainfall_data.head(5)
+pesticides_data.head(5)
+needed = ['Area','Year','Value']
+pesticides_data = pesticides_data[needed]
+temp_data= temp_data[temp_data.Year >= 1961]
+yield_final = pd.merge(yield_data,temp_data,on=['Year','Area'])
+yield_final = pd.merge(yield_final,pesticides_data,on=['Year','Area'])
+yield_final.rename(columns = {'Value_x':'Yield_Value','Value_y':'Pesticides_Value'}, inplace = True)
+rainfall_data.rename(columns = {' Area':'Area'}, inplace = True)
+yield_final = pd.merge(yield_final,rainfall_data,on=['Year','Area'])
+yield_final.rename(columns = {'average_rain_fall_mm_per_year':'average_rain'}, inplace = True)
+yield_final["average_rain"] = pd.to_numeric(yield_final["average_rain"], errors='coerce')
+yield_final=yield_final.dropna()
+yield_final.info()
+yield_df.info()
+yield_final = yield_final[['Area','Item','Year','avg_temp','Pesticides_Value','average_rain','Yield_Value']]
+yield_final
+yield_final.info()
+yield_final.hist(bins = 25,figsize=(20,15));
