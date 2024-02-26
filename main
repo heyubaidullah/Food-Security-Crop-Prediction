@@ -47,3 +47,76 @@ yield_final = yield_final[['Area','Item','Year','avg_temp','Pesticides_Value','a
 yield_final
 yield_final.info()
 yield_final.hist(bins = 25,figsize=(20,15));
+yield_final['Pesticides_log']= np.log(yield_final['Pesticides_Value'])
+yield_final['Pesticides_log'].hist(bins = 25,figsize=(5,3));
+yield_final['rain_temp']= yield_final['avg_temp'] * yield_final['average_rain']
+yield_final['Pesticides_rain']= np.log(yield_final['Pesticides_Value'] / yield_final['average_rain'])
+yield_final['Pesticides_temp']= np.log(yield_final['Pesticides_Value'] / yield_final['avg_temp'])
+yield_final['Pesticides_temp_rain']= (yield_final['Pesticides_temp'] / yield_final['Pesticides_rain'])
+yield_final['rain_log']= np.log(yield_final['avg_temp'])
+yield_final['temp_rainlog']=yield_final['avg_temp'] /  yield_final['rain_log']
+num_cols=['avg_temp', 'Pesticides_Value', 'average_rain','rain_temp','Pesticides_rain','Pesticides_temp','Pesticides_temp_rain','Pesticides_log','rain_log','temp_rainlog','Yield_Value']
+corr_matrix = yield_final[num_cols].corr()
+corr_matrix["Yield_Value"].sort_values(ascending=False)
+datacorr=yield_final.copy()
+from sklearn.preprocessing import LabelEncoder
+categorical_columns = datacorr.select_dtypes(include=['object']).columns.tolist()
+label_encoder = LabelEncoder()
+for column in categorical_columns:
+    datacorr[column] = label_encoder.fit_transform(datacorr[column])
+datacorr
+sns.heatmap(datacorr.corr() , cmap='PuOr')
+datacorr['Yield_Value'].hist(bins = 25 , figsize=(5,3));
+datacorr["Yield_Value_Cat"] = pd.cut(datacorr["Yield_Value"],
+ bins=[0.,30000, 100000,250000, 350000.,np.inf],
+ labels=[1, 2, 3, 4, 5])
+datacorr["Yield_Value_Cat"].value_counts().sort_index().plot.bar(rot=0,
+grid=True)
+plt.xlabel("Yield_Value_Cat")
+plt.ylabel("Number of districts")
+plt.show()
+strat_train_set, strat_test_set = train_test_split(
+datacorr, test_size=0.1, stratify=datacorr["Yield_Value_Cat"],random_state=1812)
+strat_test_set["Yield_Value_Cat"].value_counts()/len(strat_test_set)
+train_set, test_set = train_test_split(datacorr, test_size=0.1,random_state=1812)
+test_set["Yield_Value_Cat"].value_counts()/len(test_set)
+datacorr["Yield_Value_Cat"].value_counts()/len(datacorr)
+X = datacorr.drop("Yield_Value", axis=1)
+Y = datacorr["Yield_Value"].copy()
+X_train, X_test, y_train, y_test= train_test_split(X,Y, test_size=0.1, stratify=datacorr["Yield_Value_Cat"],random_state=1812)
+std_scaler = StandardScaler()
+X_train_sc = std_scaler.fit_transform(X_train)
+X_test_sc = std_scaler.transform(X_test)
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error, mean_absolute_percentage_error
+from xgboost import XGBRegressor
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import BaggingRegressor
+results = []
+
+models = [
+    ('Linear Regression', LinearRegression())]
+
+for name, model in models:
+    model.fit(X_train_sc, y_train)
+    y_pred = model.predict(X_test_sc)
+    accuracy = model.score(X_test_sc, y_test)
+    MSE = mean_squared_error(y_test, y_pred)
+    R2_score = r2_score(y_test, y_pred)
+    results.append((name, accuracy, MSE, R2_score))
+    acc = (model.score(X_train_sc , y_train)*100)
+    print(f'The accuracy of the {name} Model Train is {acc:.2f}')
+    acc =(model.score(X_test_sc , y_test)*100)
+    print(f'The accuracy of the  {name} Model Test is {acc:.2f}')
+    plt.scatter(y_test, y_pred,s=10,color='#9B673C')
+    plt.xlabel('Actual Values')
+    plt.ylabel('Predicted Values')
+    plt.title(f' {name} Evaluation')
+    plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='green', linewidth = 4)
+    plt.show()
+
+dff = pd.DataFrame(results, columns=['Model', 'Accuracy', 'MSE', 'R2_score'])
+df_styled_best = dff.style.highlight_max(subset=['Accuracy','R2_score'], color='green').highlight_min(subset=['MSE'], color='green').highlight_max(subset=['MSE'], color='red').highlight_min(subset=['Accuracy','R2_score'], color='red')
+display(df_styled_best)
