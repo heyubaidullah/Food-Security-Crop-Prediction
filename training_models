@@ -1,0 +1,145 @@
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error, mean_absolute_percentage_error
+from xgboost import XGBRegressor
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import BaggingRegressor
+results = []
+
+models = [
+    ('Linear Regression', LinearRegression())]
+
+for name, model in models:
+    model.fit(X_train_sc, y_train)
+    y_pred = model.predict(X_test_sc)
+    accuracy = model.score(X_test_sc, y_test)
+    MSE = mean_squared_error(y_test, y_pred)
+    R2_score = r2_score(y_test, y_pred)
+    results.append((name, accuracy, MSE, R2_score))
+    acc = (model.score(X_train_sc , y_train)*100)
+    print(f'The accuracy of the {name} Model Train is {acc:.2f}')
+    acc =(model.score(X_test_sc , y_test)*100)
+    print(f'The accuracy of the  {name} Model Test is {acc:.2f}')
+    plt.scatter(y_test, y_pred,s=10,color='#9B673C')
+    plt.xlabel('Actual Values')
+    plt.ylabel('Predicted Values')
+    plt.title(f' {name} Evaluation')
+    plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='green', linewidth = 4)
+    plt.show()
+
+dff = pd.DataFrame(results, columns=['Model', 'Accuracy', 'MSE', 'R2_score'])
+df_styled_best = dff.style.highlight_max(subset=['Accuracy','R2_score'], color='green').highlight_min(subset=['MSE'], color='green').highlight_max(subset=['MSE'], color='red').highlight_min(subset=['Accuracy','R2_score'], color='red')
+display(df_styled_best)
+
+results = []
+
+models = [
+    ('Random Forest', RandomForestRegressor(random_state=1812))]
+
+for name, model in models:
+    model.fit(X_train_sc, y_train)
+    y_pred = model.predict(X_test_sc)
+    accuracy = model.score(X_test_sc, y_test)
+    MSE = mean_squared_error(y_test, y_pred)
+    R2_score = r2_score(y_test, y_pred)
+    results.append((name, accuracy, MSE, R2_score))
+    acc = (model.score(X_train_sc , y_train)*100)
+    print(f'The accuracy of the {name} Model Train is {acc:.2f}')
+    acc =(model.score(X_test_sc , y_test)*100)
+    print(f'The accuracy of the  {name} Model Test is {acc:.2f}')
+    plt.scatter(y_test, y_pred,s=10,color='#9B673C')
+    plt.xlabel('Actual Values')
+    plt.ylabel('Predicted Values')
+    plt.title(f' {name} Evaluation')
+    plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='green', linewidth = 4)
+    plt.show()
+
+dff = pd.DataFrame(results, columns=['Model', 'Accuracy', 'MSE', 'R2_score'])
+df_styled_best = dff.style.highlight_max(subset=['Accuracy','R2_score'], color='green').highlight_min(subset=['MSE'], color='green').highlight_max(subset=['MSE'], color='red').highlight_min(subset=['Accuracy','R2_score'], color='red')
+display(df_styled_best)
+
+results = []
+
+models = [
+    ('XGBoost', XGBRegressor(random_state=1812))]
+
+for name, model in models:
+    model.fit(X_train_sc, y_train)
+    y_pred = model.predict(X_test_sc)
+    accuracy = model.score(X_test_sc, y_test)
+    MSE = mean_squared_error(y_test, y_pred)
+    R2_score = r2_score(y_test, y_pred)
+    results.append((name, accuracy, MSE, R2_score))
+    acc = (model.score(X_train_sc , y_train)*100)
+    print(f'The accuracy of the {name} Model Train is {acc:.2f}')
+    acc =(model.score(X_test_sc , y_test)*100)
+    print(f'The accuracy of the  {name} Model Test is {acc:.2f}')
+    plt.scatter(y_test, y_pred,s=10,color='#9B673C')
+    plt.xlabel('Actual Values')
+    plt.ylabel('Predicted Values')
+    plt.title(f' {name} Evaluation')
+    plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='green', linewidth = 4)
+    plt.show()
+
+dff = pd.DataFrame(results, columns=['Model', 'Accuracy', 'MSE', 'R2_score'])
+df_styled_best = dff.style.highlight_max(subset=['Accuracy','R2_score'], color='green').highlight_min(subset=['MSE'], color='green').highlight_max(subset=['MSE'], color='red').highlight_min(subset=['Accuracy','R2_score'], color='red')
+display(df_styled_best)
+
+results = []
+
+models = [
+    ('KNN',KNeighborsRegressor(n_neighbors=5))]
+
+for name, model in models:
+    model.fit(X_train_sc, y_train)
+    y_pred = model.predict(X_test_sc)
+    accuracy = model.score(X_test_sc, y_test)
+    MSE = mean_squared_error(y_test, y_pred)
+    R2_score = r2_score(y_test, y_pred)
+    results.append((name, accuracy, MSE, R2_score))
+    acc = (model.score(X_train_sc , y_train)*100)
+    print(f'The accuracy of the {name} Model Train is {acc:.2f}')
+    acc =(model.score(X_test_sc , y_test)*100)
+    print(f'The accuracy of the  {name} Model Test is {acc:.2f}')
+    plt.scatter(y_test, y_pred,s=10,color='#9B673C')
+    plt.xlabel('Actual Values')
+    plt.ylabel('Predicted Values')
+    plt.title(f' {name} Evaluation')
+    plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='green', linewidth = 4)
+    plt.show()
+
+dff = pd.DataFrame(results, columns=['Model', 'Accuracy', 'MSE', 'R2_score'])
+df_styled_best = dff.style.highlight_max(subset=['Accuracy','R2_score'], color='green').highlight_min(subset=['MSE'], color='green').highlight_max(subset=['MSE'], color='red').highlight_min(subset=['Accuracy','R2_score'], color='red')
+display(df_styled_best)
+
+print(dff)
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Bar plot for Accuracy
+plt.figure(figsize=(10, 6))
+sns.barplot(x='Model', y='Accuracy', data=dff, palette='viridis')
+plt.title('Model Accuracy Comparison')
+plt.show()
+
+# Bar plot for MSE
+plt.figure(figsize=(10, 6))
+sns.barplot(x='Model', y='MSE', data=dff, palette='viridis')
+plt.title('Model MSE Comparison')
+plt.show()
+
+# Bar plot for R2_score
+plt.figure(figsize=(10, 6))
+sns.barplot(x='Model', y='R2_score', data=dff, palette='viridis')
+plt.title('Model R2_score Comparison')
+plt.show()
+
+df_styled_best = (
+    dff.style
+    .highlight_max(subset=['Accuracy', 'R2_score'], color='green')
+    .highlight_min(subset=['MSE'], color='green')
+    .highlight_max(subset=['MSE'], color='red')
+    .highlight_min(subset=['Accuracy', 'R2_score'], color='red')
+)
+display(df_styled_best)
