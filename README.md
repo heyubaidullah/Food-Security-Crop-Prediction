@@ -5,3 +5,4 @@ The key libraries I am using are NumPy, Pandas, Seaborn, Matplotlib, Scikit-lear
 The datasets are sourced from a google sheet repository where the data is provided by the ministries. After the usual steps of data loading, cleaning and preprocessing, I tried feature engineering.
 This project implements feature engineering by creating new features like logarithmic transformations of pesticide values, combining temperature and rainfall information, and creating categorical labels for the target variable (crop yield).
 Currently, I am using linear regression as the model to predict the output but I am also trying out other models based on their accuracy.
+Have a look at the visualizations here : https://food-security-crop-prediction.streamlit.app/
